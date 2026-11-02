@@ -252,7 +252,7 @@
 
   <main id="top">
     <section class="hero" aria-labelledby="page-title">
-      <img class="hero-image" src="site/images/DSCF2535.JPG" alt="Dubrovnik's stone city walls overlooking the Adriatic" fetchpriority="high">
+      <img class="hero-image" src="site/images/DSCF2535.JPG?v=20261102-2" alt="Dubrovnik's stone city walls overlooking the Adriatic" fetchpriority="high">
       <div class="hero-copy">
         <div class="kicker">Croatia / July 2026</div>
         <h1 class="hero-title" id="page-title">Dubrovnik</h1>
@@ -293,6 +293,7 @@
 
   <script>
     const assetPath = "site/images/";
+    const assetVersion = "?v=20261102-2";
 
     // The source order is the journal sequence. "featured" frames span two columns on larger screens.
     const photos = [
@@ -312,7 +313,7 @@
     gallery.innerHTML = photos.map((photo, index) => `
       <button class="photo${photo.featured ? " featured" : ""} reveal" type="button" data-index="${index}" aria-label="Open ${photo.title}">
         <span class="image-wrap ratio-${photo.ratio}">
-          <img src="${assetPath + photo.file}" alt="${photo.alt}" loading="lazy" decoding="async" fetchpriority="low">
+          <img src="${assetPath + photo.file + assetVersion}" alt="${photo.alt}" loading="lazy" decoding="async" fetchpriority="low">
         </span>
         <span class="caption">
           <strong>${photo.title}</strong>
@@ -384,7 +385,7 @@
     function displayPhoto(index) {
       activeIndex = (index + photos.length) % photos.length;
       const photo = photos[activeIndex];
-      viewerImage.src = assetPath + photo.file;
+      viewerImage.src = assetPath + photo.file + assetVersion;
       viewerImage.alt = photo.alt;
       viewerLabel.innerHTML = `${photo.title}<small>${String(activeIndex + 1).padStart(2, "0")} / ${String(photos.length).padStart(2, "0")}</small>`;
     }
