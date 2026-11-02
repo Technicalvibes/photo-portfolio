@@ -43,6 +43,26 @@ try {
     foreach ($sourceImage in $sourceImages) {
         $image = [System.Drawing.Image]::FromFile($sourceImage.FullName)
         try {
+            # Camera JPEGs may store portrait orientation as EXIF metadata while
+            # leaving the underlying pixels sideways. Apply that transform before
+            # resizing because the optimized export intentionally drops metadata.
+            $orientation = 1
+            if ($image.PropertyIdList -contains 274) {
+                $orientation = [BitConverter]::ToUInt16($image.GetPropertyItem(274).Value, 0)
+            }
+
+            $rotateFlip = switch ($orientation) {
+                2 { [System.Drawing.RotateFlipType]::RotateNoneFlipX }
+                3 { [System.Drawing.RotateFlipType]::Rotate180FlipNone }
+                4 { [System.Drawing.RotateFlipType]::Rotate180FlipX }
+                5 { [System.Drawing.RotateFlipType]::Rotate90FlipX }
+                6 { [System.Drawing.RotateFlipType]::Rotate90FlipNone }
+                7 { [System.Drawing.RotateFlipType]::Rotate270FlipX }
+                8 { [System.Drawing.RotateFlipType]::Rotate270FlipNone }
+                default { [System.Drawing.RotateFlipType]::RotateNoneFlipNone }
+            }
+            $image.RotateFlip($rotateFlip)
+
             $scale = [Math]::Min(1.0, $MaxDimension / [double][Math]::Max($image.Width, $image.Height))
             $width = [Math]::Max(1, [int][Math]::Round($image.Width * $scale))
             $height = [Math]::Max(1, [int][Math]::Round($image.Height * $scale))
