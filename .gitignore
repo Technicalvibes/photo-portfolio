@@ -1,0 +1,9 @@
+# Local source photographs are intentionally excluded from Git.
+# The optimized copies in site/images are the deployable assets.
+Croatia Best of Best/
+
+# Local hosting and editor state
+.netlify/
+.vscode/
+Thumbs.db
+Desktop.ini
