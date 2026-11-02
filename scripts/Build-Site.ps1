@@ -13,13 +13,12 @@ Set-StrictMode -Version Latest
 Add-Type -AssemblyName System.Drawing
 
 $projectRoot = Split-Path -Parent $PSScriptRoot
-$sourceHtml = Join-Path $projectRoot 'Photography_Site.html'
+$siteHtml = Join-Path $projectRoot 'index.html'
 $sourceImageDirectory = Join-Path $projectRoot 'Croatia Best of Best'
-$outputRoot = Join-Path $projectRoot 'site'
-$outputImageDirectory = Join-Path $outputRoot 'images'
+$outputImageDirectory = Join-Path $projectRoot 'site\images'
 
-if (-not (Test-Path -LiteralPath $sourceHtml -PathType Leaf)) {
-    throw "Source HTML not found: $sourceHtml"
+if (-not (Test-Path -LiteralPath $siteHtml -PathType Leaf)) {
+    throw "Site HTML not found: $siteHtml"
 }
 
 if (-not (Test-Path -LiteralPath $sourceImageDirectory -PathType Container)) {
@@ -27,12 +26,6 @@ if (-not (Test-Path -LiteralPath $sourceImageDirectory -PathType Container)) {
 }
 
 New-Item -ItemType Directory -Path $outputImageDirectory -Force | Out-Null
-
-# The deployed site needs a conventional index page and short, URL-safe asset paths.
-$html = Get-Content -LiteralPath $sourceHtml -Raw -Encoding UTF8
-$html = $html.Replace('Croatia%20Best%20of%20Best/', 'images/')
-$utf8WithoutBom = New-Object System.Text.UTF8Encoding($false)
-[System.IO.File]::WriteAllText((Join-Path $outputRoot 'index.html'), $html, $utf8WithoutBom)
 
 $jpegEncoder = [System.Drawing.Imaging.ImageCodecInfo]::GetImageEncoders() |
     Where-Object { $_.MimeType -eq 'image/jpeg' } |
@@ -88,4 +81,4 @@ finally {
     $encoderParameters.Dispose()
 }
 
-Write-Host "Site ready at $outputRoot"
+Write-Host "Optimized site images ready at $outputImageDirectory"
